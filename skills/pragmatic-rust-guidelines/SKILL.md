@@ -45,7 +45,7 @@ Choose and inspect the relevant part file based on your current task:
 | [`02-2-libs-ux.md`](parts/02-2-libs-ux.md) | Libraries - API UX | 14 | `M-SIMPLE-ABSTRACTIONS`, `M-AVOID-WRAPPERS`, `M-DI-HIERARCHY`, `M-ERRORS-CANONICAL-STRUCTS`, `M-FROM-ERROR`, `M-INIT-BUILDER`, `M-INIT-CASCADED`, `M-SERVICES-CLONE`, `M-ESSENTIAL-FN-INHERENT`, `M-BALANCED-MODULES`, `M-NO-PRELUDE`, `M-PARAMETER-CONSISTENCY`, `M-COLLECTION-TRAITS`, `M-ASYNC-FN` |
 | [`02-3-libs-resilience.md`](parts/02-3-libs-resilience.md) | Libraries - Resilience & Robustness | 9 | `M-MOCKABLE-SYSCALLS`, `M-TEST-UTIL`, `M-INTEGRATION-TESTS`, `M-STRONG-TYPES`, `M-STRONG-TYPES-GUARD`, `M-BUILD-RESULT`, `M-NO-GLOB-REEXPORTS`, `M-AVOID-STATICS`, `M-LOG-NOT-PRINT` |
 | [`02-4-libs-building.md`](parts/02-4-libs-building.md) | Libraries - Building & Cargo Features | 3 | `M-OOBE`, `M-SYS-CRATES`, `M-FEATURES-ADDITIVE` |
-| [`03-macros.md`](parts/03-macros.md) | Macro Design & Safety | 7 | `M-MACRO-LAST-RESORT`, `M-EXAMPLE-OVER-PROC`, `M-MACROS-DONT-LIE`, `M-MACRO-MAIN-CRATE`, `M-MACRO-HELPERS`, `M-PROC-IMPL`, `M-PROC-IMPLIED-ITEMS` |
+| [`03-macros.md`](parts/03-macros.md) | Macro Design & Safety | 8 | `M-MACRO-LAST-RESORT`, `M-EXAMPLE-OVER-PROC`, `M-MACROS-DONT-LIE`, `M-MACRO-MAIN-CRATE`, `M-MACRO-VERSION-PIN`, `M-MACRO-HELPERS`, `M-PROC-IMPL`, `M-PROC-IMPLIED-ITEMS` |
 | [`04-apps.md`](parts/04-apps.md) | Application Binary Design | 3 | `M-MIMALLOC-APPS`, `M-APP-ERROR`, `M-TARGET-CPU` |
 | [`05-ffi.md`](parts/05-ffi.md) | FFI & Native Interoperability | 3 | `M-ISOLATE-DLL-STATE`, `M-FFI-TRANSLATES`, `M-FFI-NAMING` |
 | [`06-correctness.md`](parts/06-correctness.md) | Correctness & Bug Prevention | 7 | `M-UNSAFE`, `M-UNSOUND`, `M-UNSAFE-IMPLIES-UB`, `M-PANIC-IS-STOP`, `M-PANIC-ON-BUG`, `M-PANIC-CONTINUATION`, `M-PANIC-MESSAGE` |
@@ -61,6 +61,7 @@ Choose and inspect the relevant part file based on your current task:
 
 ## Source Revision
 - Repository: https://github.com/microsoft/rust-guidelines
-- Incorporated revision: [`46e57284865473dedbf605f6b3e50666febd8802`](https://github.com/microsoft/rust-guidelines/commit/46e57284865473dedbf605f6b3e50666febd8802)
-- Revision committed at: 2026-09-15T14:42:09+02:00
+- Incorporated revision: [`19723b30aadf1854fef6a56c2da2395dc03255c1`](https://github.com/microsoft/rust-guidelines/commit/19723b30aadf1854fef6a56c2da2395dc03255c1)
+- Revision committed at: 2026-09-25T14:11:14+02:00
+- Guidelines tree: `61c407fa73abcc498066e05a17bef134cf733728`
 - License: MIT License (see [`LICENSE.md`](LICENSE.md) for full copyright and permission notice)
