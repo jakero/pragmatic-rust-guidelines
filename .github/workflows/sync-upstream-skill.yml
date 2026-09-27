@@ -19,7 +19,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  track-upstream:
+  sync-upstream-skill:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

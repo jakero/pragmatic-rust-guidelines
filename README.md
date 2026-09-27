@@ -22,7 +22,7 @@ Microsoft [Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guideline
 - [`parts/`](skills/pragmatic-rust-guidelines/parts/): 분야별 목차와 각 규칙의 근거·본문. 아래 표에서 직접 열 수 있습니다.
 - [`LICENSE.md`](skills/pragmatic-rust-guidelines/LICENSE.md): 원본 Microsoft Pragmatic Rust Guidelines의 MIT 라이선스 저작권 고지(Copyright notice) 및 허가문 전문(Permission notice). MIT 라이선스 요건을 온전히 충족하려면 단순 주석만이 아닌 본 전문 파일이 함께 배포되어야 합니다.
 - [`scripts/`](scripts/): 생성 스크립트와 진입점 템플릿. 다른 프로젝트에서 스킬을 **사용**할 때는 복사할 필요가 없습니다.
-- [`.github/workflows/track-upstream.yml`](.github/workflows/track-upstream.yml): upstream 가이드라인 변경을 감지하고 갱신 PR을 제안하는 GitHub Actions 자동화 워크플로.
+- [`.github/workflows/sync-upstream-skill.yml`](.github/workflows/sync-upstream-skill.yml): upstream 가이드라인 변경을 감지하고 갱신 PR을 제안하는 GitHub Actions 자동화 워크플로.
 
 ### 분야별 지침
 
@@ -67,7 +67,7 @@ Microsoft [Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guideline
 
 ### 자동 갱신 (GitHub Actions)
 
-GitHub Actions 워크플로(`.github/workflows/track-upstream.yml`)를 통해 정기적으로 upstream 변경을 감지하고 갱신 PR을 제안합니다.
+GitHub Actions 워크플로(`.github/workflows/sync-upstream-skill.yml`)를 통해 정기적으로 upstream 변경을 감지하고 갱신 PR을 제안합니다.
 
 - **실행 주기**: 매주 월요일 05:00 한국 시간(일요일 20:00 UTC)에 정기 실행 (`schedule`) 및 수동 실행 (`workflow_dispatch`).
 - **변경 감지 기준**: upstream `microsoft/rust-guidelines`의 `HEAD:src/guidelines` Git tree SHA와 현재 `skills/pragmatic-rust-guidelines/SKILL.md`에 기록된 `Guidelines tree:` SHA를 비교합니다.
