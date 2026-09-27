@@ -5,6 +5,7 @@
 - 이 저장소는 `microsoft/rust-guidelines`의 fork가 아니다. upstream `src/`를 복사하거나 커밋하지 않는다.
 - Git commit과 push는 각각 실행 전에 사용자의 명시적인 승인을 받는다. 작업 완료는 승인으로 간주하지 않는다.
 - 자동 갱신은 `.github/workflows/track-upstream.yml`에서 PR로 제안한다. 검증 없이 생성물을 `main`에 직접 반영하거나 자동 병합하도록 바꾸지 않는다.
+- 프로젝트에 변경 사항(스크립트 동작, 워크플로 설정, 디렉터리 구조 등)이 발생하면 `README.md`에 함께 반영할 내용을 검토한 뒤 사용자에게 알린다.
 
 ## 수정 위치
 
