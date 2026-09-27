@@ -520,7 +520,7 @@ echo "Target directory: $SKILLS_DIR"
 echo ""
 
 # [4단계] 임시 스테이징 디렉터리 준비 (트랜잭션 빌드 보장)
-# 기존 스킬 파일을 즉시 삭제하지 않고, 임시 작업 공간에 먼저 완전하게 생성한 뒤 원자적으로 교체합니다.
+# 기존 스킬 파일을 즉시 삭제하지 않고, 임시 작업 공간에 먼저 완전하게 생성 및 검증한 뒤 백업·승격 트랜잭션을 통해 안전하게 교체합니다.
 STAGE_DIR=$(mktemp -d "${PROJECT_ROOT}/skills/.build_stage.XXXXXX")
 BACKUP_CONTAINER=""
 BACKUP_PREVIOUS=""

@@ -69,7 +69,7 @@ Microsoft [Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guideline
 
 GitHub Actions 워크플로(`.github/workflows/track-upstream.yml`)를 통해 정기적으로 upstream 변경을 감지하고 갱신 PR을 제안합니다.
 
-- **실행 주기**: 매주 월요일 03:17 UTC 정기 실행 (`schedule`) 및 수동 실행 (`workflow_dispatch`).
+- **실행 주기**: 매주 월요일 05:00 한국 시간(일요일 20:00 UTC)에 정기 실행 (`schedule`) 및 수동 실행 (`workflow_dispatch`).
 - **변경 감지 기준**: upstream `microsoft/rust-guidelines`의 `HEAD:src/guidelines` Git tree SHA와 현재 `skills/pragmatic-rust-guidelines/SKILL.md`에 기록된 `Guidelines tree:` SHA를 비교합니다.
 - **Tree SHA와 Commit SHA의 차이**: Commit SHA는 upstream 저장소 전체의 변경(루트 문서, 타 디렉터리, CI 등)을 모두 반영하지만, Guidelines Tree SHA는 `src/guidelines` 내부 파일 내용이 실제로 변경되었을 때만 바뀝니다. 따라서 가이드라인 본문과 무관한 커밋으로 인한 불필요한 스킬 재생성을 원천 차단합니다.
 - **단일 PR 제안**: 변경이 감지되거나 수동 실행에서 `force=true`인 경우 스킬을 재생성하고, `automation/upstream-guidelines` 브랜치를 대상으로 단일 PR을 생성하거나 기존 PR을 갱신합니다. 변경분은 사람이 직접 리뷰한 뒤 `main`에 병합합니다 (`main` 브랜치에 직접 push하지 않습니다).
@@ -103,11 +103,11 @@ rm -rf "$UPSTREAM_TMP"
 2. **원본 규칙 목록 구성 및 누락 검증**: 13개 분야 디렉터리와 README.md include 구문을 분석하여 규칙 ID 매핑을 구축하고, `src/guidelines` 아래 모든 `M-*.md` 파일이 빠짐없이 카테고리에 매핑되었는지 전수 검증합니다. 비매핑 규칙 파일이 발견되면 파일 경로를 출력하고 즉시 실패 처리합니다.
 3. **템플릿 조기 검증**: 출력 디렉터리를 변경하기 전에 `scripts/SKILL.md.template` 파일의 존재 및 필수 치환 표식(`<!-- ROUTING_TABLE_ENTRIES -->`, `<!-- UPSTREAM_SOURCE_REVISION -->`)의 포함 여부를 미리 확인합니다.
 4. **임시 스테이징 디렉터리 준비**: 기존 스킬 파일을 즉시 삭제하지 않고 격리된 임시 작업 디렉터리(`skills/.build_stage.*`)를 생성하여 파트 파일들과 라이선스(`LICENSE.md`)를 먼저 안전하게 생성할 수 있도록 준비합니다.
-5. **분야별 파트 작성**: 공식 공개 순서대로 13개 파트 파일을 스테이징 공간에 작성합니다. 각 파일에는 분야 소개, 목차(TOC)와 규칙별 Rationale 요약, 정제된 규칙 본문이 들어갑니다. 코드 블록(fence)을 정밀 추적하여 내부 내용을 온전히 보존하며, 고유 앵커 삽입, `<why>`의 `Rationale` 변환, 버전 태그 및 이미지 생략, `Tip: `·`Caution: ` 라벨 정규화, 파트 간 링크 재작성을 적용합니다.
+5. **분야별 파트 작성**: 공식 공개 순서대로 13개 파트 파일을 스테이징 공간에 작성합니다. 각 파일에는 분야 소개, 목차(TOC)와 규칙별 Rationale 요약, 정제된 규칙 본문이 들어갑니다. 코드 블록(fence)을 정밀 추적하여 이미지 생략, 권고 라벨 변환, 파트 간 링크 재작성 시 코드 내부 내용을 온전히 보존하며, 고유 앵커 삽입, `<why>`의 `Rationale` 변환, 버전 태그 생략 등을 정제 파이프라인으로 적용합니다.
 6. **파트와 규칙 앵커 확인**: 실제 생성된 총 규칙 수가 2단계에서 파악한 원본 규칙 수와 정확히 일치하는지, 각 파트 파일에 해당 규칙의 고유 앵커(`<a id="M-..."></a>`)가 빠짐없이 들어갔는지 스테이징 공간에서 검사합니다.
 7. **`SKILL.md` 작성**: `scripts/SKILL.md.template`을 읽어 분야별 색인 표와 출처 리비전 정보(저장소 URL, 커밋 SHA, 커밋 날짜, Guidelines tree SHA)를 치환한 `SKILL.md`를 스테이징 공간에 작성합니다.
 8. **생성 문서의 연결 전수 검사**: 스테이징 공간에 생성된 모든 Markdown 파일 내의 상대 링크와 규칙 앵커 대상이 실제로 존재하는지 전수 검사합니다. 아울러 `SKILL.md`에 언급된 모든 규칙 ID가 유효한 ID인지 검증합니다.
-9. **백업 및 복원 트랜잭션을 통한 최종 반영**: 모든 검증을 통과한 경우, 기존 배포 디렉터리를 임시 백업(`skills/.build_backup.*`)으로 이동한 뒤 검증된 스테이징 디렉터리를 배포 위치로 승격합니다(`mv`). 승격 도중 예기치 않은 오류가 발생하더라도 트랩이 백업을 원래 위치로 자동 복원합니다.
+9. **백업 및 복원 트랜잭션을 통한 최종 반영**: 모든 검증을 통과한 경우, 기존 배포 디렉터리를 임시 백업(`skills/.build_backup.*`)으로 이동한 뒤 검증된 스테이징 디렉터리를 배포 위치로 승격합니다(`mv`). 승격 완료 전에 오류나 시그널이 발생하면 트랩이 백업으로부터 이전 배포본 복원을 시도하여 불완전한 상태로 방치되는 것을 방지합니다.
 10. **완료 결과 출력**: 생성된 파트 수(13개), 원본에서 정제된 총 규칙 수(upstream 리비전에 따라 콘솔에 동적 출력), 스킬 디렉터리 및 진입점 파일 경로를 콘솔에 출력하고 종료합니다.
 
 ### 라이선스

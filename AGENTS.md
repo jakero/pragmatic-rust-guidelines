@@ -20,6 +20,7 @@
 
 ## 참고 자료
 
-- 원본 저장소: https://github.com/microsoft/rust-guidelines
-- 추적 대상: https://github.com/microsoft/rust-guidelines/tree/main/src/guidelines
-- 원본 가이드북: https://microsoft.github.io/rust-guidelines/
+- 원본 저장소: [https://github.com/microsoft/rust-guidelines](https://github.com/microsoft/rust-guidelines)
+- 추적 대상: [https://github.com/microsoft/rust-guidelines/tree/main/src/guidelines](https://github.com/microsoft/rust-guidelines/tree/main/src/guidelines)
+- 원본 가이드북: [https://microsoft.github.io/rust-guidelines/](https://microsoft.github.io/rust-guidelines/)
+
