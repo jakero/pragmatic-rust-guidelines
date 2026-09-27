@@ -120,6 +120,54 @@ declare -A UNRESOLVED_RULE_REFS=(
     ["M-RUNTIME-ABSTRACTED"]=1
 )
 
+# 빌드 및 링크 오류를 표준 에러 및 GitHub Actions 에러 어노테이션으로 출력하는 함수
+report_build_error() {
+    local file="$1"
+    local message="$2"
+    echo "Error: $message" >&2
+    if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then
+        echo "::error file=$file,title=Guideline Build Error::$message" >&2
+    fi
+}
+
+# 규칙 ID 별칭 및 미해결 참조 예외 목록의 정합성을 검증하는 함수
+validate_reference_exceptions() {
+    local has_error=0
+
+    # 1. RULE_ID_ALIASES 검증
+    for old_id in "${!RULE_ID_ALIASES[@]}"; do
+        local target_id="${RULE_ID_ALIASES[$old_id]}"
+
+        # 매핑 대상 ID가 실제 규칙 목록에 존재하는지 확인
+        if [[ -z "${PART_BY_RULE_ID[$target_id]+x}" ]]; then
+            report_build_error "$SRC_GUIDELINES" \
+                "Rule alias target '$target_id' (mapped from '$old_id') is missing from source guidelines. Upstream may have renamed or removed it."
+            has_error=1
+        fi
+
+        # 과거 ID가 실제 규칙 목록에 다시 등장하여 별칭과 충돌하는지 확인
+        if [[ -n "${PART_BY_RULE_ID[$old_id]+x}" ]]; then
+            report_build_error "$SRC_GUIDELINES" \
+                "Rule alias source '$old_id' now exists as an active guideline in upstream (${PART_BY_RULE_ID[$old_id]}). Remove this entry from RULE_ID_ALIASES."
+            has_error=1
+        fi
+    done
+
+    # 2. UNRESOLVED_RULE_REFS 검증
+    for unresolved_id in "${!UNRESOLVED_RULE_REFS[@]}"; do
+        # 미해결 목록에 등록된 ID의 실제 규칙이 upstream에 등장했는지 확인
+        if [[ -n "${PART_BY_RULE_ID[$unresolved_id]+x}" ]]; then
+            report_build_error "$SRC_GUIDELINES" \
+                "Unresolved rule reference '$unresolved_id' now exists as an active guideline in upstream (${PART_BY_RULE_ID[$unresolved_id]}). Review the rule and remove it from UNRESOLVED_RULE_REFS."
+            has_error=1
+        fi
+    done
+
+    if [[ "$has_error" -ne 0 ]]; then
+        return 1
+    fi
+}
+
 # 원본 가이드라인 디렉터리를 스캔하여 파트 매핑 및 규칙 ID 색인을 구성하는 함수
 load_source_map() {
     local -A seen_source_files=()
@@ -252,7 +300,7 @@ rewrite_link_destination() {
         anchor="${RULE_ID_ALIASES[$anchor]}"
     fi
 
-    if [[ -n "$anchor" && -n "${UNRESOLVED_RULE_REFS[$anchor]+x}" ]]; then
+    if [[ -n "$anchor" && -z "${PART_BY_RULE_ID[$anchor]+x}" && -n "${UNRESOLVED_RULE_REFS[$anchor]+x}" ]]; then
         echo "Notice: Leaving unresolved source reference '$anchor' in $source_file unlinked." >&2
         return 2
     fi
@@ -280,13 +328,15 @@ rewrite_link_destination() {
             printf '%s' "$destination"
             return 0
         fi
-        echo "Error: Cannot map source link '$destination' in $source_file to a generated guideline part." >&2
+        report_build_error "$source_file" \
+            "Cannot map source link '$destination' in $source_file to a generated guideline part."
         return 1
     fi
 
     if [[ -n "$anchor" ]]; then
         if [[ -z "${PART_BY_RULE_ID[$anchor]+x}" && "$anchor" == M-* ]]; then
-            echo "Error: Source link '$destination' in $source_file references unknown rule ID '$anchor'." >&2
+            report_build_error "$source_file" \
+                "Source link '$destination' in $source_file references unknown rule ID '$anchor'. Inspect upstream rule rename or invalid reference."
             return 1
         fi
     fi
@@ -492,6 +542,7 @@ verify_upstream_source_revision
 # [2단계] 원본 가이드라인 소스 매핑 및 규칙 ID 인덱싱
 # 각 카테고리 디렉터리와 README.md의 include 구문 유효성을 검증하고 규칙 ID 매핑을 구축합니다.
 load_source_map
+validate_reference_exceptions
 
 # [3단계] 템플릿 조기 검증 (출력 수정 전 수행)
 # SKILL.md.template의 존재 및 CRLF를 감안한 필수 치환 표식 포함 여부를 미리 확인합니다.
