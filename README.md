@@ -72,9 +72,15 @@ GitHub Actions 워크플로(`.github/workflows/track-upstream.yml`)를 통해 �
 - **실행 주기**: 매주 월요일 05:00 한국 시간(일요일 20:00 UTC)에 정기 실행 (`schedule`) 및 수동 실행 (`workflow_dispatch`).
 - **변경 감지 기준**: upstream `microsoft/rust-guidelines`의 `HEAD:src/guidelines` Git tree SHA와 현재 `skills/pragmatic-rust-guidelines/SKILL.md`에 기록된 `Guidelines tree:` SHA를 비교합니다.
 - **Tree SHA와 Commit SHA의 차이**: Commit SHA는 upstream 저장소 전체의 변경(루트 문서, 타 디렉터리, CI 등)을 모두 반영하지만, Guidelines Tree SHA는 `src/guidelines` 내부 파일 내용이 실제로 변경되었을 때만 바뀝니다. 따라서 가이드라인 본문과 무관한 커밋으로 인한 불필요한 스킬 재생성을 원천 차단합니다.
-- **단일 PR 제안**: 변경이 감지되거나 수동 실행에서 `force=true`인 경우 스킬을 재생성하고, `automation/upstream-guidelines` 브랜치를 대상으로 단일 PR을 생성하거나 기존 PR을 갱신합니다. 변경분은 사람이 직접 리뷰한 뒤 `main`에 병합합니다 (`main` 브랜치에 직접 push하지 않습니다).
-- **실패 시 안전성**: upstream clone, 검증, 빌드 단계에서 오류가 발생하면 workflow가 실패로 종료되며 PR을 생성하지 않고 기존 정상 스킬을 유지합니다.
 - **부트스트랩 기준본 안내**: 저장소 초기 `main`에는 복사된 구버전 스킬이 부트스트랩 기준본으로 포함되어 있으며, `Guidelines tree` 항목이 없습니다. 최초 GitHub Actions 실행 시 이를 감지하여 최신 upstream 가이드라인으로 재생성하는 첫 번째 PR을 자동으로 제안합니다. 해당 PR을 검토 후 병합하기 전까지는 초기 부트스트랩 스킬이 제공됩니다.
+
+#### 워크플로 실행 순서
+
+1. **저장소 체크아웃 및 upstream 준비**: 워크플로 러너에 이 저장소를 checkout하고, `$RUNNER_TEMP` 임시 디렉터리에 upstream 저장소(`microsoft/rust-guidelines`)의 `src/guidelines`만 sparse checkout으로 준비합니다.
+2. **변경 감지 (`detect`)**: upstream `HEAD:src/guidelines`의 Git tree SHA와 현재 `skills/pragmatic-rust-guidelines/SKILL.md`의 `Guidelines tree:` 줄을 엄격히 비교합니다. 항목이 없으면 부트스트랩 빌드로 처리하며, 다중 항목이나 형식 오류가 발견되면 워크플로를 즉시 실패 처리합니다.
+3. **조건부 스킬 빌드 (`build`)**: Guidelines tree SHA가 다르거나 수동 실행 시 `force=true`인 경우에만 `scripts/build_agent_skills.sh`를 실행하여 스킬을 재생성합니다. 동일한 tree SHA의 정기 실행 또는 `force=false` 수동 실행은 빌드와 PR 단계를 건너뜁니다.
+4. **단일 PR 제안 (`peter-evans/create-pull-request`)**: 빌드가 성공하고 `skills/pragmatic-rust-guidelines/` 내에 실제 변경 사항이 존재하는 경우, `automation/upstream-guidelines` 브랜치에 단일 PR을 생성하거나 기존 PR을 갱신합니다 (`main` 브랜치에 직접 push하지 않으며 사람이 리뷰 후 병합합니다). 변경 사항이 없으면 PR을 만들지 않습니다.
+5. **실패 격리 및 무결성 보장**: clone, 검증, 빌드 중 오류가 발생하면 워크플로가 즉시 실패로 중단되며 PR을 생성하지 않고 기존 정상 스킬을 유지합니다.
 
 ### 수동 빌드 방법
 
