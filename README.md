@@ -22,6 +22,7 @@ Microsoft [Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guideline
 - [`parts/`](skills/pragmatic-rust-guidelines/parts/): 분야별 목차와 각 규칙의 근거·본문. 아래 표에서 직접 열 수 있습니다.
 - [`LICENSE.md`](skills/pragmatic-rust-guidelines/LICENSE.md): 원본 Microsoft Pragmatic Rust Guidelines의 MIT 라이선스 저작권 고지(Copyright notice) 및 허가문 전문(Permission notice). MIT 라이선스 요건을 온전히 충족하려면 단순 주석만이 아닌 본 전문 파일이 함께 배포되어야 합니다.
 - [`scripts/`](scripts/): 생성 스크립트와 진입점 템플릿. 다른 프로젝트에서 스킬을 **사용**할 때는 복사할 필요가 없습니다.
+- [`.github/workflows/track-upstream.yml`](.github/workflows/track-upstream.yml): upstream 가이드라인 변경을 감지하고 갱신 PR을 제안하는 GitHub Actions 자동화 워크플로.
 
 ### 분야별 지침
 
@@ -107,7 +108,7 @@ rm -rf "$UPSTREAM_TMP"
 7. **`SKILL.md` 작성**: `scripts/SKILL.md.template`을 읽어 분야별 색인 표와 출처 리비전 정보(저장소 URL, 커밋 SHA, 커밋 날짜, Guidelines tree SHA)를 치환한 `SKILL.md`를 스테이징 공간에 작성합니다.
 8. **생성 문서의 연결 전수 검사**: 스테이징 공간에 생성된 모든 Markdown 파일 내의 상대 링크와 규칙 앵커 대상이 실제로 존재하는지 전수 검사합니다. 아울러 `SKILL.md`에 언급된 모든 규칙 ID가 유효한 ID인지 검증합니다.
 9. **백업 및 복원 트랜잭션을 통한 최종 반영**: 모든 검증을 통과한 경우, 기존 배포 디렉터리를 임시 백업(`skills/.build_backup.*`)으로 이동한 뒤 검증된 스테이징 디렉터리를 배포 위치로 승격합니다(`mv`). 승격 도중 예기치 않은 오류가 발생하더라도 트랩이 백업을 원래 위치로 자동 복원합니다.
-10. **완료 결과 출력**: 생성된 파트 수(13개), 정제된 규칙 수(89개), 스킬 디렉터리 및 진입점 파일 경로를 콘솔에 출력하고 종료합니다.
+10. **완료 결과 출력**: 생성된 파트 수(13개), 원본에서 정제된 총 규칙 수(upstream 리비전에 따라 콘솔에 동적 출력), 스킬 디렉터리 및 진입점 파일 경로를 콘솔에 출력하고 종료합니다.
 
 ### 라이선스
 

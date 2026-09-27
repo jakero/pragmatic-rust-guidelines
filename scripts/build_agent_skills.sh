@@ -792,7 +792,7 @@ for rule_id in "${!PART_BY_RULE_ID[@]}"; do
 done
 
 # [7단계] 에이전트 스킬 진입점 인덱스 파일(SKILL.md) 생성
-# _build의 템플릿(SKILL.md.template)을 읽어 라우팅 테이블 및 출처 표식을 동적 데이터로 치환합니다.
+# scripts의 템플릿(SKILL.md.template)을 읽어 라우팅 테이블 및 출처 표식을 동적 데이터로 치환합니다.
 echo "Generating $SKILL_FILE from template..."
 
 while IFS= read -r line || [[ -n "$line" ]]; do
