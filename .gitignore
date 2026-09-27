@@ -1,0 +1,3 @@
+# Temporary build staging and backup directories
+skills/.build_stage.*
+skills/.build_backup.*

@@ -1,0 +1,103 @@
+name: Track Upstream Guidelines
+
+on:
+  schedule:
+    - cron: '17 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force rebuild even if guidelines tree SHA unchanged'
+        type: boolean
+        default: true
+
+concurrency:
+  group: upstream-guidelines
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  track-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Clone upstream guidelines
+        run: |
+          git clone --depth=1 --filter=blob:none --sparse --branch main https://github.com/microsoft/rust-guidelines.git "$RUNNER_TEMP/rust-guidelines"
+          git -C "$RUNNER_TEMP/rust-guidelines" sparse-checkout set src/guidelines
+
+      - name: Detect upstream changes
+        id: detect
+        run: |
+          upstream_commit=$(git -C "$RUNNER_TEMP/rust-guidelines" rev-parse HEAD)
+          upstream_sha=$(git -C "$RUNNER_TEMP/rust-guidelines" rev-parse HEAD:src/guidelines)
+          skill_file="skills/pragmatic-rust-guidelines/SKILL.md"
+
+          if [[ ! -f "$skill_file" ]]; then
+            echo "Error: Skill file not found: $skill_file" >&2
+            exit 1
+          fi
+
+          mapfile -t matches < <(grep -E '^[[:space:]]*-[[:space:]]+Guidelines tree:' "$skill_file" || true)
+          count="${#matches[@]}"
+
+          if [[ "$count" -eq 0 ]]; then
+            echo "No existing Guidelines tree entry found: bootstrap build required."
+            tree_sha=""
+            changed="true"
+          elif [[ "$count" -gt 1 ]]; then
+            echo "Error: Multiple Guidelines tree entries ($count) found in $skill_file." >&2
+            exit 1
+          else
+            line="${matches[0]}"
+            if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+Guidelines[[:space:]]+tree:[[:space:]]+\`([0-9a-f]{40})\`[[:space:]]*$ ]]; then
+              tree_sha="${BASH_REMATCH[1]}"
+              if [[ "$tree_sha" == "$upstream_sha" ]]; then
+                changed="false"
+              else
+                changed="true"
+              fi
+            else
+              echo "Error: Malformed Guidelines tree entry in $skill_file: '$line'" >&2
+              exit 1
+            fi
+          fi
+
+          echo "upstream_commit=$upstream_commit" >> "$GITHUB_OUTPUT"
+          echo "upstream_sha=$upstream_sha" >> "$GITHUB_OUTPUT"
+          echo "tree_sha=$tree_sha" >> "$GITHUB_OUTPUT"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+          echo "Detection result:"
+          echo " - Upstream commit: $upstream_commit"
+          echo " - Upstream tree  : $upstream_sha"
+          echo " - Current tree   : ${tree_sha:-<none>}"
+          echo " - Changed        : $changed"
+
+      - name: Build agent skills
+        if: steps.detect.outputs.changed == 'true' || (github.event_name == 'workflow_dispatch' && inputs.force)
+        run: |
+          bash scripts/build_agent_skills.sh "$RUNNER_TEMP/rust-guidelines"
+
+      - name: Propose pull request
+        if: steps.detect.outputs.changed == 'true' || (github.event_name == 'workflow_dispatch' && inputs.force)
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
+        with:
+          add-paths: skills/pragmatic-rust-guidelines
+          branch: automation/upstream-guidelines
+          base: main
+          delete-branch: true
+          title: Update skill from upstream guidelines
+          commit-message: Update skill from upstream guidelines
+          body: |
+            Automated update of `skills/pragmatic-rust-guidelines` from upstream repository.
+
+            - **Upstream repository**: https://github.com/microsoft/rust-guidelines
+            - **Upstream commit**: [`${{ steps.detect.outputs.upstream_commit }}`](https://github.com/microsoft/rust-guidelines/commit/${{ steps.detect.outputs.upstream_commit }})
+            - **Guidelines tree SHA**: `${{ steps.detect.outputs.upstream_sha }}`
+            - **Previous tree SHA**: `${{ steps.detect.outputs.tree_sha || 'none (bootstrap)' }}`
+            - **Trigger**: `${{ github.event_name }}` (force=${{ inputs.force || 'n/a' }})
