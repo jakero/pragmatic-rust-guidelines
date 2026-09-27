@@ -436,7 +436,7 @@ Use hierarchical dot-notation: `<component>.<operation>.<state>`
 event!(
     Level::INFO,
     file.path = file_path,
-    "file {{file.path}} processed succesfully",
+    "file {{file.path}} processed successfully",
 );
 
 // Good: Named events
@@ -444,7 +444,7 @@ event!(
     name: "file.processing.success", // event identifier
     Level::INFO,
     file.path = file_path,
-    "file {{file.path}} processed succesfully",
+    "file {{file.path}} processed successfully",
 );
 ```
 
