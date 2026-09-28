@@ -55,11 +55,18 @@ Microsoft [Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guideline
 | 개요·체크리스트 | `src/guidelines/README.md`의 가이드북 소개·기고 절차와 `src/guidelines/checklist/README.md`의 전체 점검표는 포함하지 않습니다. 핵심 적용 원칙(`must/should`의 유연성, `Spirit Over Letter`)은 `SKILL.md`에 담습니다. |
 | 이미지 | `src/guidelines/docs/`의 rustdoc 화면 캡처 4개와 `src/guidelines/libs/interop/M-TYPES-SEND.png`의 성능 그래프를 포함하지 않습니다. |
 | 표시 형식 | PNG 이미지 태그와 단독 `<div>` 래퍼를 생략하고, 원본의 보충 설명·주의 표식(`<tip></tip>`, `<alert></alert>`)을 `Tip: `·`Caution: `으로 바꿉니다. |
-| 규칙 참조 | 과거 ID `M-ABSTRACTIONS-DONT-NEST`와 `M-DOC-FIRST-SENTENCE`는 현재 규칙의 앵커로 연결합니다. 원본에 대응 규칙이 없는 `M-RUNTIME-ABSTRACTED`는 링크 없이 보존하고, 관련 규칙에 `Unavailable source reference` 안내를 넣습니다. |
+| 규칙 참조 | 이전 식별자와 현재 대응 규칙이 없는 참조를 각각 처리하여 링크 정합성을 유지합니다. (상세 내용은 아래 '규칙 교차 참조 정합성 보정' 참고) |
 
 **이미지의 시각 정보는 스킬에 없습니다.** 화면 배치나 성능 그래프의 비교가 필요하면 원본 문서를 확인하세요. `#[doc(inline)]` 사용 조건, 첫 문장 길이, `Send` 호환성과 성능상 주의점은 텍스트 본문에 남아 있습니다. 미해결 규칙 참조의 내용은 추측하거나 다른 규칙으로 대체하지 않습니다.
 
 각 규칙에는 고유 ID 기반 앵커(`<a id="M-..."></a>`)가 있습니다. `SKILL.md`의 색인은 이 앵커를 가리키며, 앵커 이동을 지원하지 않는 도구에서는 해당 ID를 검색해 규칙을 찾을 수 있습니다.
+
+### 규칙 교차 참조 정합성 보정
+
+upstream 가이드라인 본문에는 이전 식별자를 유지하는 참조와 현재 원본에 대응하는 독립 규칙이 없는 참조가 있습니다. 빌드 스크립트는 이를 감지하여 다음과 같이 정합성을 보정합니다.
+
+- **이전 규칙 ID(별칭) 연결**: 과거 식별자인 `M-ABSTRACTIONS-DONT-NEST`와 `M-DOC-FIRST-SENTENCE`는 현재 개정된 공식 규칙(`M-SIMPLE-ABSTRACTIONS`, `M-FIRST-DOC-SENTENCE`)의 앵커로 자동 연결합니다.
+- **대응 규칙이 없는 참조 보존**: 현재 원본에 대응하는 독립 규칙이 없는 `M-RUNTIME-ABSTRACTED`의 경우, 임의로 다른 규칙으로 대체하거나 내용을 추측하지 않고 텍스트를 그대로 보존하되 `Unavailable source reference` 안내를 표기합니다.
 
 ## 갱신 및 재생성
 
@@ -82,12 +89,12 @@ GitHub Actions 워크플로(`.github/workflows/sync-upstream-skill.yml`)를 통�
 4. **단일 PR 제안 (`peter-evans/create-pull-request`)**: 빌드가 성공하고 `skills/pragmatic-rust-guidelines/` 내에 실제 변경 사항이 존재하는 경우, `automation/upstream-guidelines` 브랜치에 단일 PR을 생성하거나 기존 PR을 갱신합니다 (`main` 브랜치에 직접 push하지 않으며 사람이 리뷰 후 병합합니다). 변경 사항이 없으면 PR을 만들지 않습니다.
 5. **실패 격리 및 무결성 보장**: clone, 검증, 빌드 중 오류가 발생하면 워크플로가 즉시 실패로 중단되며 PR을 생성하지 않고 기존 정상 스킬을 유지합니다.
 
-#### 규칙 변경 및 예외 참조 오류 시 대처 요령
+#### 규칙 변경 및 예외 참조 시 대처 요령
 
-upstream에서 규칙 ID가 변경되거나 실체 없는 규칙 참조가 생기면, 워크플로는 안전을 위해 빌드를 즉시 중단하고 GitHub Actions에 문제 파일과 대상 ID가 포함된 오류(`::error::`)를 남깁니다. 후속 PR 생성 단계는 실행되지 않으며 기존 정상 스킬이 보존됩니다.
+upstream에서 규칙 ID가 변경되거나 대응 규칙이 없는 참조가 생기면, 워크플로는 안전을 위해 빌드를 즉시 중단하고 GitHub Actions에 문제 파일과 대상 ID가 포함된 오류(`::error::`)를 남깁니다. 후속 PR 생성 단계는 실행되지 않으며 기존 정상 스킬이 보존됩니다.
 
-- **과거 규칙 ID 별칭 (`RULE_ID_ALIASES`)**: upstream에서 규칙 ID를 바꾼 후 기존 문서의 링크를 미처 갱신하지 않은 경우에 사용합니다. 만약 upstream이 대상 규칙을 삭제·재변경하거나, 과거 ID가 새로운 실제 규칙으로 부활해 별칭과 충돌하면 빌드가 중단됩니다. 관리자는 `scripts/build_agent_skills.sh`의 `RULE_ID_ALIASES` 매핑을 확인하여 대상 ID를 갱신하거나 항목을 제거합니다.
-- **실체 없는 규칙 참조 (`UNRESOLVED_RULE_REFS`)**: upstream 가이드라인에서 참조하지만 실제 규칙 파일이 존재하지 않는 경우(예: `M-RUNTIME-ABSTRACTED`) 링크를 비활성화하고 안내문을 남깁니다. 만약 upstream에 해당 ID의 실제 규칙 파일이 새로 추가되면 예외 전제가 깨지므로 사전 검증 단계에서 빌드가 중단됩니다. 관리자는 upstream 규칙의 실체와 내용을 확인한 후 `UNRESOLVED_RULE_REFS`에서 해당 ID를 제거하고 빌드를 재실행합니다.
+- **과거 규칙 ID 별칭 (`RULE_ID_ALIASES`)**: upstream에서 규칙 ID를 바꾼 후 기존 문서의 링크를 미처 갱신하지 않은 경우에 사용합니다. 만약 upstream이 대상 규칙을 삭제·재변경하거나, 과거 ID가 새로운 공식 규칙으로 채택되어 별칭과 중복되면 빌드가 중단됩니다. 관리자는 `scripts/build_agent_skills.sh`의 `RULE_ID_ALIASES` 매핑을 확인하여 대상 ID를 갱신하거나 항목을 제거합니다.
+- **대응 규칙이 없는 참조 (`UNRESOLVED_RULE_REFS`)**: upstream 가이드라인에서 참조하지만 대응하는 독립 규칙 파일이 존재하지 않는 경우(예: `M-RUNTIME-ABSTRACTED`) 링크를 비활성화하고 안내문을 남깁니다. 만약 upstream에 해당 ID의 실제 규칙 파일이 새로 추가되면 예외 전제가 깨지므로 사전 검증 단계에서 빌드가 중단됩니다. 관리자는 upstream 규칙의 추가 내용을 확인한 후 `UNRESOLVED_RULE_REFS`에서 해당 ID를 제거하고 빌드를 재실행합니다.
 - **새로운 알 수 없는 규칙 참조 발생 시**: 원인을 확인하지 않고 임의로 `UNRESOLVED_RULE_REFS`에 추가하지 않습니다. upstream 원본의 오타인지, 이름 변경 누락인지 확인한 뒤 조치합니다.
 
 ### 수동 빌드 방법
@@ -114,7 +121,7 @@ rm -rf "$UPSTREAM_TMP"
 `scripts/build_agent_skills.sh`는 다음 10단계를 거쳐 스킬을 안전하게 만듭니다.
 
 1. **upstream 소스 리비전 및 입력 무결성 검증**: 전달된 경로가 Git 저장소 최상위 루트인지, `HEAD:src/guidelines` 트리가 존재하는지, 작업 트리 내 `src/guidelines`의 tracked/staged/untracked 변경 사항이 없는 깨끗한 상태인지 검증합니다. 통과 시 commit SHA, commit date, guidelines tree SHA를 획득합니다.
-2. **원본 규칙 목록 구성 및 누락·예외 목록 검증**: 13개 분야 디렉터리와 README.md include 구문을 분석하여 규칙 ID 매핑을 구축하고, `src/guidelines` 아래 모든 `M-*.md` 파일이 빠짐없이 카테고리에 매핑되었는지 전수 검증합니다. 아울러 `RULE_ID_ALIASES`의 대상 존재 및 충돌 여부, `UNRESOLVED_RULE_REFS`의 실제 규칙 부활 여부를 사전 검증하여 예외 전제가 깨진 경우 즉시 실패 처리합니다.
+2. **원본 규칙 목록 구성 및 누락·예외 목록 검증**: 13개 분야 디렉터리와 README.md include 구문을 분석하여 규칙 ID 매핑을 구축하고, `src/guidelines` 아래 모든 `M-*.md` 파일이 빠짐없이 카테고리에 매핑되었는지 전수 검증합니다. 아울러 `RULE_ID_ALIASES`의 대상 존재 및 충돌 여부, `UNRESOLVED_RULE_REFS` 대상 규칙의 upstream 추가 여부를 사전 검증하여 예외 전제가 깨진 경우 즉시 실패 처리합니다.
 3. **템플릿 조기 검증**: 출력 디렉터리를 변경하기 전에 `scripts/SKILL.md.template` 파일의 존재 및 필수 치환 표식(`<!-- ROUTING_TABLE_ENTRIES -->`, `<!-- UPSTREAM_SOURCE_REVISION -->`)의 포함 여부를 미리 확인합니다.
 4. **임시 스테이징 디렉터리 준비**: 기존 스킬 파일을 즉시 삭제하지 않고 격리된 임시 작업 디렉터리(`skills/.build_stage.*`)를 생성하여 파트 파일들과 라이선스(`LICENSE.md`)를 먼저 안전하게 생성할 수 있도록 준비합니다.
 5. **분야별 파트 작성**: 공식 공개 순서대로 13개 파트 파일을 스테이징 공간에 작성합니다. 각 파일에는 분야 소개, 목차(TOC)와 규칙별 Rationale 요약, 정제된 규칙 본문이 들어갑니다. 코드 블록(fence)을 정밀 추적하여 이미지 생략, 권고 라벨 변환, 파트 간 링크 재작성 시 코드 내부 내용을 온전히 보존하며, 고유 앵커 삽입, `<why>`의 `Rationale` 변환, 버전 태그 생략 등을 정제 파이프라인으로 적용합니다.

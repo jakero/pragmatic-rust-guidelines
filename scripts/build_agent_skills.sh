@@ -115,7 +115,7 @@ declare -A RULE_ID_ALIASES=(
     ["M-DOC-FIRST-SENTENCE"]="M-FIRST-DOC-SENTENCE"
 )
 
-# 원본 가이드라인에서 참조하지만 현재 실체가 없는 규칙 ID 집합 (링크 비활성화 처리)
+# 원본 가이드라인에서 참조하지만 현재 대응하는 독립 규칙이 없는 규칙 ID 집합 (링크 비활성화 처리)
 declare -A UNRESOLVED_RULE_REFS=(
     ["M-RUNTIME-ABSTRACTED"]=1
 )
@@ -130,7 +130,7 @@ report_build_error() {
     fi
 }
 
-# 규칙 ID 별칭 및 미해결 참조 예외 목록의 정합성을 검증하는 함수
+# 규칙 ID 별칭 및 참조 예외 목록의 정합성을 검증하는 함수
 validate_reference_exceptions() {
     local has_error=0
 
@@ -145,7 +145,7 @@ validate_reference_exceptions() {
             has_error=1
         fi
 
-        # 과거 ID가 실제 규칙 목록에 다시 등장하여 별칭과 충돌하는지 확인
+        # 과거 ID가 실제 규칙 목록에 다시 등장하여 별칭 매핑과 중복되는지 확인
         if [[ -n "${PART_BY_RULE_ID[$old_id]+x}" ]]; then
             report_build_error "$SRC_GUIDELINES" \
                 "Rule alias source '$old_id' now exists as an active guideline in upstream (${PART_BY_RULE_ID[$old_id]}). Remove this entry from RULE_ID_ALIASES."
@@ -155,7 +155,7 @@ validate_reference_exceptions() {
 
     # 2. UNRESOLVED_RULE_REFS 검증
     for unresolved_id in "${!UNRESOLVED_RULE_REFS[@]}"; do
-        # 미해결 목록에 등록된 ID의 실제 규칙이 upstream에 등장했는지 확인
+        # 예외 목록에 등록된 ID의 독립 규칙이 upstream에 추가되었는지 확인
         if [[ -n "${PART_BY_RULE_ID[$unresolved_id]+x}" ]]; then
             report_build_error "$SRC_GUIDELINES" \
                 "Unresolved rule reference '$unresolved_id' now exists as an active guideline in upstream (${PART_BY_RULE_ID[$unresolved_id]}). Review the rule and remove it from UNRESOLVED_RULE_REFS."
