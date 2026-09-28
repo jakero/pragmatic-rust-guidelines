@@ -7,10 +7,11 @@ Microsoft [Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guideline
 ## 다른 프로젝트에서 사용
 
 1. 대상 프로젝트에서 에이전트의 스킬 검색 디렉터리를 확인합니다.
-2. 이 저장소의 루트에서 스킬 폴더 전체를 복사합니다. 상대 경로 링크가 유지되려면 `SKILL.md`와 `parts/`가 함께 있어야 합니다.
+2. 이 저장소의 루트에서 스킬 폴더 전체를 복사합니다. 상대 경로 링크와 라이선스 고지가 유지되도록 `SKILL.md`, `parts/`, `LICENSE.md`가 함께 있어야 합니다.
 
    ```bash
    # TARGET_SKILLS_DIR: 대상 프로젝트의 스킬 검색 디렉터리
+   mkdir -p "$TARGET_SKILLS_DIR"
    cp -R skills/pragmatic-rust-guidelines "$TARGET_SKILLS_DIR/"
    ```
 
@@ -101,6 +102,8 @@ upstream에서 등록되지 않은 규칙 ID를 가리키는 참조가 발견되
 
 로컬에서 직접 스킬을 재생성하려면 별도의 임시 upstream sparse checkout을 준비한 뒤 빌더 스크립트를 실행합니다.
 
+> **실행 환경 안내**: 빌더 스크립트(`scripts/build_agent_skills.sh`)는 Bash 4 이상(`declare -A`, `mapfile`)과 GNU coreutils(`realpath -m`)를 필요로 합니다. Ubuntu 등 표준 Linux 환경이나 WSL, GNU 도구가 설치된 환경을 권장합니다. macOS 기본 Bash(3.2) 및 BSD `realpath` 환경에서는 그대로 실행할 수 없습니다.
+
 ```bash
 # 1. 별도 임시 디렉터리에 upstream 저장소의 src/guidelines만 sparse checkout
 UPSTREAM_TMP="$(mktemp -d)"
@@ -114,7 +117,7 @@ bash scripts/build_agent_skills.sh "$UPSTREAM_TMP/rust-guidelines"
 rm -rf "$UPSTREAM_TMP"
 ```
 
-빌드 결과는 `skills/pragmatic-rust-guidelines/`의 `SKILL.md`와 13개 분야별 파트입니다. `SKILL.md`의 **Source Revision** 섹션에서 반영된 upstream 커밋 SHA, 커밋 날짜, Guidelines Git tree SHA를 확인할 수 있습니다.
+빌드 결과는 `skills/pragmatic-rust-guidelines/`의 `SKILL.md`, 13개 분야별 파트, 그리고 `LICENSE.md`입니다. `SKILL.md`의 **Source Revision** 섹션에서 반영된 upstream 커밋 SHA, 커밋 날짜, Guidelines Git tree SHA를 확인할 수 있습니다.
 
 ### 스킬이 생성되는 과정
 
