@@ -91,8 +91,8 @@ jobs:
           branch: automation/upstream-guidelines
           base: main
           delete-branch: true
-          title: Update skill from upstream guidelines
-          commit-message: Update skill from upstream guidelines
+          title: "chore(sync): automated update of skill from upstream guidelines"
+          commit-message: "chore(sync): automated update of skill from upstream guidelines"
           body: |
             Automated update of `skills/pragmatic-rust-guidelines` from upstream repository.
 
