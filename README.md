@@ -79,7 +79,7 @@ GitHub Actions 워크플로(`.github/workflows/sync-upstream-skill.yml`)를 통�
 - **실행 주기**: 매주 월요일 05:00 한국 시간(일요일 20:00 UTC)에 정기 실행 (`schedule`) 및 수동 실행 (`workflow_dispatch`).
 - **변경 감지 기준**: upstream `microsoft/rust-guidelines`의 `HEAD:src/guidelines` Git tree SHA와 현재 `skills/pragmatic-rust-guidelines/SKILL.md`에 기록된 `Guidelines tree:` SHA를 비교합니다.
 - **Tree SHA와 Commit SHA의 차이**: Commit SHA는 upstream 저장소 전체의 변경(루트 문서, 타 디렉터리, CI 등)을 모두 반영하지만, Guidelines Tree SHA는 `src/guidelines` 내부 파일 내용이 실제로 변경되었을 때만 바뀝니다. 따라서 가이드라인 본문과 무관한 커밋으로 인한 불필요한 스킬 재생성을 원천 차단합니다.
-- **부트스트랩 기준본 안내**: 저장소 초기 `main`에는 복사된 구버전 스킬이 부트스트랩 기준본으로 포함되어 있으며, `Guidelines tree` 항목이 없습니다. 최초 GitHub Actions 실행 시 이를 감지하여 최신 upstream 가이드라인으로 재생성하는 첫 번째 PR을 자동으로 제안합니다. 해당 PR을 검토 후 병합하기 전까지는 초기 부트스트랩 스킬이 제공됩니다.
+- **부트스트랩 처리**: 기존 `SKILL.md`에 `Guidelines tree:` 항목이 없으면 워크플로가 이를 최초 생성이 필요한 상태로 간주하고 갱신 PR을 제안합니다. 현재 저장소의 스킬에는 이 항목이 기록되어 있으며, 일반적인 갱신에서는 upstream의 tree SHA와 비교합니다.
 
 #### 워크플로 실행 순서
 
