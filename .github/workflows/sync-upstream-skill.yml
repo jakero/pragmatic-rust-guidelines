@@ -42,7 +42,7 @@ jobs:
             exit 1
           fi
 
-          mapfile -t matches < <(grep -E '^[[:space:]]*-[[:space:]]+Guidelines tree:' "$skill_file" || true)
+          mapfile -t matches < <(grep -E '^[[:space:]]*-[[:space:]]+Guidelines[[:space:]]+tree:' "$skill_file" || true)
           count="${#matches[@]}"
 
           if [[ "$count" -eq 0 ]]; then
@@ -54,7 +54,7 @@ jobs:
             exit 1
           else
             line="${matches[0]}"
-            if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+Guidelines[[:space:]]+tree:[[:space:]]+\`([0-9a-f]{40})\`[[:space:]]*$ ]]; then
+            if [[ "$line" =~ ^-[[:space:]]Guidelines[[:space:]]tree:[[:space:]]\`([0-9a-f]{40})\`$ ]]; then
               tree_sha="${BASH_REMATCH[1]}"
               if [[ "$tree_sha" == "$upstream_sha" ]]; then
                 changed="false"
@@ -100,4 +100,4 @@ jobs:
             - **Upstream commit**: [`${{ steps.detect.outputs.upstream_commit }}`](https://github.com/microsoft/rust-guidelines/commit/${{ steps.detect.outputs.upstream_commit }})
             - **Guidelines tree SHA**: `${{ steps.detect.outputs.upstream_sha }}`
             - **Previous tree SHA**: `${{ steps.detect.outputs.tree_sha || 'none (bootstrap)' }}`
-            - **Trigger**: `${{ github.event_name }}` (force=${{ inputs.force || 'n/a' }})
+            - **Trigger**: `${{ github.event_name }}` (force=${{ github.event_name == 'workflow_dispatch' && inputs.force || (github.event_name == 'workflow_dispatch' && !inputs.force && 'false') || 'n/a' }})
