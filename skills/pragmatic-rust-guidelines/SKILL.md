@@ -20,6 +20,7 @@ A comprehensive collection of pragmatic design guidelines helping Rust developer
 Treat `must` as expected to always hold; `should` allows flexibility. Teams may apply the guidelines as appropriate to their project.
 Understand each guideline's rationale before making exceptions; do not follow its letter when doing so would violate its purpose.
 Before choosing rules, check the project's explicit requirements and conventions, whether the change targets a library or application and a public API, and its MSRV, runtime, and deployment targets. Apply only relevant rules; do not introduce unrelated dependency, allocator, or public API changes solely to satisfy a guideline.
+When two guidelines pull in opposite directions for the same code, compare their rationales and favor the one that avoids the greater risk in the current context; state which guideline you are deprioritizing and why.
 For each task, use the quick index or routing table below, then navigate directly to the target rule's anchor to review its rationale and text.
 
 ## Quick Index by Task
