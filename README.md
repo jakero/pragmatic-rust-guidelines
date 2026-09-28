@@ -91,7 +91,7 @@ GitHub Actions 워크플로(`.github/workflows/sync-upstream-skill.yml`)를 통�
 
 #### 규칙 변경 및 예외 참조 시 대처 요령
 
-upstream에서 규칙 ID가 변경되거나 대응 규칙이 없는 참조가 생기면, 워크플로는 안전을 위해 빌드를 즉시 중단하고 GitHub Actions에 문제 파일과 대상 ID가 포함된 오류(`::error::`)를 남깁니다. 후속 PR 생성 단계는 실행되지 않으며 기존 정상 스킬이 보존됩니다.
+upstream에서 등록되지 않은 규칙 ID를 가리키는 참조가 발견되거나 기존 별칭·미해결 참조 예외의 전제가 깨지면, 워크플로는 안전을 위해 빌드를 즉시 중단하고 GitHub Actions에 문제 파일과 대상 ID가 포함된 오류(`::error::`)를 남깁니다. 후속 PR 생성 단계는 실행되지 않으며 기존 정상 스킬이 보존됩니다.
 
 - **과거 규칙 ID 별칭 (`RULE_ID_ALIASES`)**: upstream에서 규칙 ID를 바꾼 후 기존 문서의 링크를 미처 갱신하지 않은 경우에 사용합니다. 만약 upstream이 대상 규칙을 삭제·재변경하거나, 과거 ID가 새로운 공식 규칙으로 채택되어 별칭과 중복되면 빌드가 중단됩니다. 관리자는 `scripts/build_agent_skills.sh`의 `RULE_ID_ALIASES` 매핑을 확인하여 대상 ID를 갱신하거나 항목을 제거합니다.
 - **대응 규칙이 없는 참조 (`UNRESOLVED_RULE_REFS`)**: upstream 가이드라인에서 참조하지만 대응하는 독립 규칙 파일이 존재하지 않는 경우(예: `M-RUNTIME-ABSTRACTED`) 링크를 비활성화하고 안내문을 남깁니다. 만약 upstream에 해당 ID의 실제 규칙 파일이 새로 추가되면 예외 전제가 깨지므로 사전 검증 단계에서 빌드가 중단됩니다. 관리자는 upstream 규칙의 추가 내용을 확인한 후 `UNRESOLVED_RULE_REFS`에서 해당 ID를 제거하고 빌드를 재실행합니다.
