@@ -576,6 +576,7 @@ STAGE_DIR=$(mktemp -d "${PROJECT_ROOT}/skills/.build_stage.XXXXXX")
 BACKUP_CONTAINER=""
 BACKUP_PREVIOUS=""
 PUBLICATION_COMMITTED=0
+# 빌드 종료 또는 시그널 수신 시 임시 스테이징을 정리하고, 게시 중 실패 시 이전 배포본을 복원하는 트랩 함수
 cleanup() {
     local exit_code=$?
     local signal="${1:-}"
@@ -695,7 +696,7 @@ transform_advisory_markers() {
     done
 }
 
-# 개별 가이드라인 마크다운 정제 함수 (저작권 제거, 앵커/근거 변환, 권고 마커 정규화, 이미지 생략, 링크 재작성)
+# M-FROM-ERROR 설명 문장의 `.map_error()` 표기 2곳을 Rust 표준 라이브러리 Result::map_err 명칭에 맞춰 정규화하고, 알려진 문장 외의 `.map_error()` 표기는 검토하도록 실패 처리하는 함수
 normalize_guideline_prose() {
     local file="$1"
     local base_name
@@ -725,6 +726,7 @@ normalize_guideline_prose() {
     done
 }
 
+# 개별 가이드라인 마크다운 정제 함수 (저작권 제거, 앵커/근거 변환, 권고 마커 정규화, 본문 보정, 이미지 생략, 링크 재작성)
 clean_guideline() {
     local file="$1"
     local part_name="$2"
