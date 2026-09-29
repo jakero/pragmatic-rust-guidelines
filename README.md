@@ -54,7 +54,7 @@ Microsoft [Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guideline
 | 구분 | 처리 방식 |
 | :--- | :--- |
 | 개요·체크리스트 | `src/guidelines/README.md`의 가이드북 소개·기고 절차와 `src/guidelines/checklist/README.md`의 전체 점검표는 포함하지 않습니다. 핵심 적용 원칙(`must/should`의 유연성, `Spirit Over Letter`)은 `SKILL.md`에 담습니다. |
-| 이미지 | `src/guidelines/docs/`의 rustdoc 화면 캡처 4개와 `src/guidelines/libs/interop/M-TYPES-SEND.png`의 성능 그래프를 포함하지 않습니다. |
+| 이미지 | `09-docs.md`(`M-FIRST-DOC-SENTENCE`, `M-DOC-INLINE`)의 rustdoc 화면 캡처 4개와 `02-1-libs-interop.md`(`M-TYPES-SEND`)의 성능 그래프 1개를 포함하지 않습니다. |
 | 표시 형식 | PNG 이미지 태그와 단독 `<div>` 래퍼를 생략하고, 원본의 보충 설명·주의 표식(`<tip></tip>`, `<alert></alert>`)을 `Tip: `·`Caution: `으로 바꿉니다. |
 | 규칙 참조 | 이전 식별자와 현재 대응 규칙이 없는 참조를 각각 처리하여 링크 정합성을 유지합니다. (상세 내용은 아래 '규칙 교차 참조 정합성 보정' 참고) |
 | 표기 정합화 | `M-FROM-ERROR` 설명 문장의 `.map_error()` 표기 2곳을 생성 시 Rust 표준 라이브러리 `Result::map_err` 명칭에 맞춰 정규화합니다. upstream 원문이 갱신되어 반영되면 본 보정 코드는 제거됩니다. |
