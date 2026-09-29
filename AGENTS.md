@@ -10,7 +10,6 @@
 ## Git 작업
 
 - Git commit과 push는 각각 실행 전에 사용자의 명시적인 승인을 받는다. 작업 완료는 승인으로 간주하지 않는다.
-- sparse-checkout 범위 밖 파일을 스테이징할 때는 대상 경로를 명시해 `git add --sparse -- <경로>`를 사용한다. 스테이징·커밋 오류를 우회하려고 sparse-checkout 설정을 변경하지 않는다. 체크아웃 범위 변경이 작업 목적일 때는 변경 전후 패턴과 `git status`를 확인한다.
 - 커밋 전 `git diff --cached --stat`와 `git diff --cached`로 스테이징된 파일 범위와 내용을 확인한다.
 - Git 커밋 메시지 제목은 저장소 관례인 `type(scope): subject` 또는 `type: subject` 형식을 따른다. 도구명이나 모델명(예: `[Gemini]`)을 접두어로 사용하지 않는다.
 
