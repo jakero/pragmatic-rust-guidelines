@@ -346,7 +346,7 @@ Lastly, if you happen to emit lots of errors from your crate, consider creating 
 
 > **Rationale**: idiomatic error handling.
 
-Where an `Error` type is owned, it should `impl From<Other> for Error {}` instead of handling the conversion throughout the code via `.map_error()`. Calling `.map_error()` is only appropriate when dealing with foreign error types, or if contextual information needs to be preserved.
+Where an `Error` type is owned, it should `impl From<Other> for Error {}` instead of handling the conversion throughout the code via `.map_err()`. Calling `.map_err()` is only appropriate when dealing with foreign error types, or if contextual information needs to be preserved.
 
 ```rust,ignore
 // Bad, repeats the same conversion at every call site and obscures the happy path.

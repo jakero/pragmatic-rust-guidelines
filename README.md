@@ -57,6 +57,7 @@ Microsoft [Pragmatic Rust Guidelines](https://microsoft.github.io/rust-guideline
 | 이미지 | `src/guidelines/docs/`의 rustdoc 화면 캡처 4개와 `src/guidelines/libs/interop/M-TYPES-SEND.png`의 성능 그래프를 포함하지 않습니다. |
 | 표시 형식 | PNG 이미지 태그와 단독 `<div>` 래퍼를 생략하고, 원본의 보충 설명·주의 표식(`<tip></tip>`, `<alert></alert>`)을 `Tip: `·`Caution: `으로 바꿉니다. |
 | 규칙 참조 | 이전 식별자와 현재 대응 규칙이 없는 참조를 각각 처리하여 링크 정합성을 유지합니다. (상세 내용은 아래 '규칙 교차 참조 정합성 보정' 참고) |
+| 원문 오기 보정 | `M-FROM-ERROR` 설명 문장 내 비존재 메서드(`.map_error()`) 오기 2곳을 공식 Rust `Result` 메서드인 `.map_err()`로 보정합니다. upstream에서 원문이 수정되면 본 보정 코드는 제거됩니다. |
 
 **이미지의 시각 정보는 스킬에 없습니다.** 화면 배치나 성능 그래프의 비교가 필요하면 원본 문서를 확인하세요. `#[doc(inline)]` 사용 조건, 첫 문장 길이, `Send` 호환성과 성능상 주의점은 텍스트 본문에 남아 있습니다. 미해결 규칙 참조의 내용은 추측하거나 다른 규칙으로 대체하지 않습니다.
 

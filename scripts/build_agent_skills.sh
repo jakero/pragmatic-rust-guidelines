@@ -696,6 +696,35 @@ transform_advisory_markers() {
 }
 
 # 개별 가이드라인 마크다운 정제 함수 (저작권 제거, 앵커/근거 변환, 권고 마커 정규화, 이미지 생략, 링크 재작성)
+normalize_guideline_prose() {
+    local file="$1"
+    local base_name
+    base_name="$(basename "$file")"
+
+    if [[ "$base_name" != "M-FROM-ERROR.md" ]]; then
+        cat
+        return 0
+    fi
+
+    local old_prose="Where an \`Error\` type is owned, it should \`impl From<Other> for Error {}\` instead of handling the conversion throughout the code via \`.map_error()\`. Calling \`.map_error()\` is only appropriate when dealing with foreign error types, or if contextual information needs to be preserved."
+    local fixed_prose="Where an \`Error\` type is owned, it should \`impl From<Other> for Error {}\` instead of handling the conversion throughout the code via \`.map_err()\`. Calling \`.map_err()\` is only appropriate when dealing with foreign error types, or if contextual information needs to be preserved."
+
+    local line
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        if [[ "$line" == "$old_prose" ]]; then
+            printf '%s\n' "$fixed_prose"
+        elif [[ "$line" == "$fixed_prose" ]]; then
+            printf '%s\n' "$line"
+        elif [[ "$line" == *".map_error()"* ]]; then
+            report_build_error "$file" \
+                "Unexpected '.map_error()' wording found in $file. Review upstream wording changes for M-FROM-ERROR."
+            return 1
+        else
+            printf '%s\n' "$line"
+        fi
+    done
+}
+
 clean_guideline() {
     local file="$1"
     local part_name="$2"
@@ -707,6 +736,7 @@ clean_guideline() {
         | sed -E 's/<version>[^<]*<\/version>//g' \
         | strip_agent_images \
         | transform_advisory_markers \
+        | normalize_guideline_prose "$file" \
         | rewrite_markdown_links "$file" "$part_name" \
         | awk 'NF{print $0; b=0} !NF{if(!b){print ""; b=1}}'
 }
