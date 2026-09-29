@@ -24,10 +24,11 @@
 
 ## 빌드 및 검증
 
-- 빌더에는 별도로 준비한 깨끗한 upstream checkout의 루트를 전달한다: `bash scripts/build_agent_skills.sh "$UPSTREAM_CHECKOUT"`.
-- 빌더 변경은 기존 스킬을 보존하도록 격리된 프로젝트 사본에서 검증한다.
+- 빌더 검증은 `README.md`의 수동 빌드 절차에 따라 별도로 준비한 깨끗한 upstream checkout을 사용하며, 실제 작업 트리가 아닌 격리된 프로젝트 사본 안에서 먼저 실행한다: `bash scripts/build_agent_skills.sh "$UPSTREAM_CHECKOUT"`.
+- 빌더 변경 검증 시 기존 스킬을 보존하면서 사본의 출력을 점검한다.
   - 파트 수, 규칙 ID·앵커·상대 링크, `SKILL.md`의 commit/date/tree SHA와 재실행 결과를 확인한다.
   - 자동 갱신이 읽는 `Guidelines tree:` 항목의 형식과 단일성을 유지한다. 규칙 수를 고정값으로 가정하지 않는다.
+- 생성 스킬의 실제 저장소 반영이 요청된 경우에만, 격리 검증에 사용한 것과 동일한 upstream checkout 및 tree SHA로 작업 트리에서 빌더를 실행하여 산출물 diff를 확인한다. 생성 파일을 수동 편집하여 반영하지 않는다.
 - 생성 입력과 무관한 문서·주석만 변경했다면 스킬을 재생성하지 말고 해당 범위의 구문·링크·diff를 확인한다.
 - `scripts/SKILL.md.template`을 변경한 경우 깨끗한 upstream에서 재생성하여 파트 및 앵커 링크와 함께 `Guidelines tree:` 항목의 형식·단일성을 검증한다.
 - 워크플로(`.github/workflows/`)나 스크립트(`scripts/`)를 수정한 경우, `git diff --check`로 공백·개행 오류를 확인한다.
