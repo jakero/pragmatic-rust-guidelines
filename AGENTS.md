@@ -3,11 +3,16 @@
 ## 변경 및 배포 경계
 
 - 이 저장소는 `microsoft/rust-guidelines`의 fork가 아니다. upstream `src/`를 복사하거나 커밋하지 않는다.
-- Git commit과 push는 각각 실행 전에 사용자의 명시적인 승인을 받는다. 작업 완료는 승인으로 간주하지 않는다.
-- Git 커밋 메시지 제목은 저장소 관례인 `type(scope): subject` 또는 `type: subject` 형식을 따른다. 도구명이나 모델명(예: `[Gemini]`)을 접두어로 사용하지 않는다.
 - 자동 갱신은 `.github/workflows/sync-upstream-skill.yml`에서 PR로 제안한다. 검증 없이 생성물을 `main`에 직접 반영하거나 자동 병합하도록 바꾸지 않는다.
 - 프로젝트에 변경 사항(스크립트 동작, 워크플로 설정, 디렉터리 구조 등)이 발생하면 `README.md`에 함께 반영할 내용을 검토한 뒤 사용자에게 알린다.
 - 검토, 계획 작성 등 조사만 지시받은 경우 분석 결과만 보고하고 파일 수정은 진행하지 않는다. 구현은 지시문에 수정·반영이 함께 명시되어 있거나 사용자의 명시적인 승인이 있을 때만 진행한다.
+
+## Git 작업
+
+- Git commit과 push는 각각 실행 전에 사용자의 명시적인 승인을 받는다. 작업 완료는 승인으로 간주하지 않는다.
+- sparse-checkout 범위 밖 파일을 스테이징할 때는 대상 경로를 명시해 `git add --sparse -- <경로>`를 사용한다. 스테이징·커밋 오류를 우회하려고 sparse-checkout 설정을 변경하지 않는다. 체크아웃 범위 변경이 작업 목적일 때는 변경 전후 패턴과 `git status`를 확인한다.
+- 커밋 전 `git diff --cached --stat`와 `git diff --cached`로 스테이징된 파일 범위와 내용을 확인한다.
+- Git 커밋 메시지 제목은 저장소 관례인 `type(scope): subject` 또는 `type: subject` 형식을 따른다. 도구명이나 모델명(예: `[Gemini]`)을 접두어로 사용하지 않는다.
 
 ## 수정 위치
 
