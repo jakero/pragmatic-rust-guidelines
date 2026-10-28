@@ -62,7 +62,7 @@ Choose and inspect the relevant part file based on your current task:
 
 ## Source Revision
 - Repository: https://github.com/microsoft/rust-guidelines
-- Incorporated revision: [`19723b30aadf1854fef6a56c2da2395dc03255c1`](https://github.com/microsoft/rust-guidelines/commit/19723b30aadf1854fef6a56c2da2395dc03255c1)
-- Revision committed at: 2026-09-25T14:11:14+02:00
+- Incorporated revision: [`9585e288d21d2da994a0550c926a09b62d79f8bd`](https://github.com/microsoft/rust-guidelines/commit/9585e288d21d2da994a0550c926a09b62d79f8bd)
+- Revision committed at: 2026-10-26T13:04:49-07:00
 - Guidelines tree: `61c407fa73abcc498066e05a17bef134cf733728`
 - License: MIT License (see [`LICENSE.md`](LICENSE.md) for full copyright and permission notice)
